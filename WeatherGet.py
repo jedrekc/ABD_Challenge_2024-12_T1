@@ -6,39 +6,29 @@ import json
 URL_WEATHER_CURRENT = f"https://api.open-meteo.com/v1/forecast"
 URL_WEATHER_ARCHIVE = f"https://api.open-meteo.com/v1/archive"
 
-def get_weather(latitude, longitude, saveFile):
+def get_weather(latitude, longitude):
     url = rf"{URL_WEATHER_CURRENT}?{latitude=}&{longitude=}"
-    # print(rf"{url=}")
     
     resp = requests.get(url)
-
-    # print(f'{type(resp)}d=')
-    # print(f'{type(resp.json())=}')
-    # print(f'{resp.ok =}')
 
     return resp
 
 
-def saveWeather (dataToSave, saveFile):
-    with open(saveFile, "w", encoding="utf-8") as file:
-        json.dump(dataToSave, file, indent=4, ensure_ascii=False)
-
-    # print(f"Zapisano dane w pliku {saveFile}.")
+def save_weather (data_to_save, save_file):
+    with open(save_file, "w", encoding="utf-8") as file:
+        json.dump(data_to_save, file, indent=4, ensure_ascii=False)
 
 
 @click.command()
 @click.argument('latitude', type=float)
 @click.argument('longitude', type=float)
-@click.argument('savefile', type=str)
-def WeatherGet(latitude, longitude, savefile):
-    # latitude = 53.0677
-    # longitude = 17.8315
+@click.argument('save_file', type=str)
+def main(latitude, longitude, save_file):
     
-    resp = get_weather(latitude, longitude, savefile)
+    resp = get_weather(latitude, longitude, save_file)
     
-    # print(f"{resp.ok=}")   
     if resp.ok:
-        saveWeather(resp.json(), savefile)
+        save_weather(resp.json(), save_file)
         
 if __name__ == "__main__":
-    WeatherGet()
+    main()
